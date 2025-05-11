@@ -7,8 +7,9 @@ export class Dangeon extends Stage {
     init() {
         this.backgroundColor = 'black';
 
+
         this.map = this.createDangeon();
-        // console.log(this.map);
+        console.log(this.map);
 
         const hero = HeroSprite.getInstance();
         this.hero = hero;
@@ -30,6 +31,7 @@ export class Dangeon extends Stage {
     }
 
     createDangeon() {
+        const exitRooms = [];
         const map = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -50,7 +52,9 @@ export class Dangeon extends Stage {
 
         this.createRoom(map, x, y, chance);
         this.calculateDoors(map);
-        this.prepareMap(map);
+        this.prepareMap(map, exitRooms);
+
+        this.chooseExit(map, exitRooms);
 
         return map;
     }
@@ -114,7 +118,7 @@ export class Dangeon extends Stage {
         }
     }
 
-    prepareMap(map) {
+    prepareMap(map, exitRooms) {
         for (let y = 0; y < map.length; y++) {
             for (let x = 0; x < map[y].length; x++) {
                 if (map[y][x] !== 0) {
@@ -160,9 +164,18 @@ export class Dangeon extends Stage {
                         enemies: null,
                         enemiesCount: null
                     }
+                    if (doors.length == 1) {
+                        exitRooms.push({x: x, y: y});
+                    }
                 }
             }
         }
+    }
+
+    chooseExit(map, exitRooms) {
+        const randomRoom = exitRooms[Math.floor(Math.random() * exitRooms.length)]
+
+        map[randomRoom.y][randomRoom.x].map[6][6] = 38;
     }
 
     renderRoom(map, x, y) {
@@ -180,6 +193,11 @@ export class Dangeon extends Stage {
                 if ([2, 10, 35, 41].includes(tileIndex)) {
                     clone.setCostumeCollider('main')
                     clone.addTag('wall')
+                }
+
+                if (tileIndex == 38) { //exit
+                    clone.setCostumeCollider('main');
+                    clone.addTag('exit')
                 }
             }
         }
