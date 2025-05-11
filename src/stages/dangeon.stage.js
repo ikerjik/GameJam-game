@@ -1,6 +1,7 @@
 import {Stage} from 'jetcode-scrubjs';
 import {TileSprite} from '../sprites/tile.sprite.js';
 import {HeroSprite} from "../sprites/hero.sprite";
+import {EnemyBatSprite} from "../sprites/enemy-bat.sprite";
 
 export class Dangeon extends Stage {
     init() {
@@ -10,9 +11,14 @@ export class Dangeon extends Stage {
         // console.log(this.map);
 
         const hero = HeroSprite.getInstance();
+        this.hero = hero;
+
         hero.x_on_map = 5;
         hero.y_on_map = 5;
         hero.layer = 2;
+
+        const bat = new EnemyBatSprite(this);
+        bat.layer = 2;
 
         this.tile = new TileSprite();
         this.TILE_WIDTH = 64;

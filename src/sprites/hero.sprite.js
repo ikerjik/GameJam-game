@@ -35,6 +35,7 @@ export class HeroSprite extends Sprite {
         // Custom configure here
 
         this.name = 'Hero';
+        this.addTag('player');
 
         this.addCostume('public/images/hero/idle/idle1.png');
         this.addCostume('public/images/hero/idle/idle2.png');
@@ -186,11 +187,6 @@ export class HeroSprite extends Sprite {
             }
         }
 
-        if (this.game.keyPressed('f')) {
-            this.playSound('gameover');
-            this.animationState.action = 'die';
-        }
-
         if (this.game.keyPressed(['w', 's', 'a', 'd']) && !this.touchingWall) {
             this.playSound('move', {
                 'volume': 0.1
@@ -271,6 +267,17 @@ export class HeroSprite extends Sprite {
 
     bulletMove(bullet) {
         bullet.move(10);
+
+        if (bullet.touchEdge()) {
+            bullet.delete();
+
+        } else if (bullet.touchTag('wall')) {
+            bullet.delete();
+
+        } else if (bullet.touchTag('enemy')) {
+            this.otherSprite.delete();
+            bullet.delete();
+        }
     }
 
     checkNextLevel() {
@@ -335,5 +342,16 @@ export class HeroSprite extends Sprite {
         context.fillRect(570, 10, 150 * hero.ammo / 100, 20);
         context.strokeStyle = 'black';
         context.strokeRect(570, 10, 150, 20);
+    }
+
+    hit() {
+        this.hp -= 10;
+
+        if (this.hp <= 0) {
+            this.hp = 0;
+
+            this.playSound('gameover');
+            this.animationState.action = 'die';
+        }
     }
 }
