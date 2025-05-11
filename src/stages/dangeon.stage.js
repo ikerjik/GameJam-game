@@ -1,5 +1,4 @@
 import {Stage} from 'jetcode-scrubjs';
-import {NpcSprite} from '../sprites/npc.sprite.js';
 import {TileSprite} from '../sprites/tile.sprite.js';
 import {HeroSprite} from "../sprites/hero.sprite";
 
@@ -22,8 +21,6 @@ export class Dangeon extends Stage {
         this.onReady(()=>{
             this.renderRoom(this.map, hero.x_on_map, hero.y_on_map);
         })
-
-        this.forever(this.control(hero))
     }
 
     createDangeon() {
@@ -181,55 +178,4 @@ export class Dangeon extends Stage {
             }
         }
     }
-
-    control (hero) {
-        return ()=> {
-            if (this.game.keyPressed('w')) {
-                hero.y -= 5;
-                if (hero.touchTag('wall')) {
-                    hero.topY = hero.otherSprite.bottomY;
-                }
-            }
-            if (this.game.keyPressed('s')) {
-                hero.y += 5;
-                if (hero.touchTag('wall')) {
-                    hero.bottomY = hero.otherSprite.topY;
-                }
-            }
-            if (this.game.keyPressed('a')) {
-                hero.x -= 5;
-                if (hero.touchTag('wall')) {
-                    hero.leftX = hero.otherSprite.rightX;
-                }
-            }
-            if (this.game.keyPressed('d')) {
-                hero.x += 5;
-                if (hero.touchTag('wall')) {
-                    hero.rightX = hero.otherSprite.leftX;
-                }
-            }
-
-            if (hero.y < 0) {
-                hero.y_on_map -= 1;
-                hero.y = this.height;
-                this.renderRoom(this.map, hero.x_on_map, hero.y_on_map);
-            }
-            if (hero.y > this.height) {
-                hero.y_on_map += 1;
-                hero.y = 0;
-                this.renderRoom(this.map, hero.x_on_map, hero.y_on_map);
-            }
-            if (hero.x < 0) {
-                hero.x_on_map -= 1;
-                hero.x = this.width;
-                this.renderRoom(this.map, hero.x_on_map, hero.y_on_map);
-            }
-            if (hero.x > this.width) {
-                hero.x_on_map += 1;
-                hero.x = 0;
-                this.renderRoom(this.map, hero.x_on_map, hero.y_on_map);
-            }
-        }
-    }
-
 }
