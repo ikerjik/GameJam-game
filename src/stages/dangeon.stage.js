@@ -1,19 +1,19 @@
 import {Stage} from 'jetcode-scrubjs';
 import {NpcSprite} from '../sprites/npc.sprite.js';
 import {TileSprite} from '../sprites/tile.sprite.js';
+import {HeroSprite} from "../sprites/hero.sprite";
 
 export class Dangeon extends Stage {
     init() {
         this.backgroundColor = 'black';
 
         this.map = this.createDangeon();
-        console.log(this.map);
+        // console.log(this.map);
 
-        const hero = new NpcSprite();
+        const hero = HeroSprite.getInstance();
         hero.x_on_map = 5;
         hero.y_on_map = 5;
         hero.layer = 2;
-        // hero.setRectCollider('main', 38, 38)
 
         this.tile = new TileSprite();
         this.TILE_WIDTH = 64;
