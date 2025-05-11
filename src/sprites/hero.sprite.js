@@ -5,9 +5,12 @@ import {Dangeon} from "../stages/dangeon.stage";
 export class HeroSprite extends Sprite {
     static instance;
 
+    hp = 100;
+    ammo = 10;
     moveSpeed = 3;
     stopTimer = 0;
     touchingWall = false;
+    dieTimer = 0;
 
     constructor(stage) {
         super(stage);
@@ -49,11 +52,20 @@ export class HeroSprite extends Sprite {
         this.addCostume('public/images/hero/attack/attack3.png');
         this.addCostume('public/images/hero/attack/attack4.png');
 
+        this.addSound('public/sounds/hero/shot.wav', 'shot');
+        this.addSound('public/sounds/hero/not_ammo.mp3', 'not_ammo');
+        this.addSound('public/sounds/hero/reload.mp3', 'reload');
+        this.addSound('public/sounds/hero/next_level.mp3', 'next_level');
+        this.addSound('public/sounds/hero/move.wav', 'move');
+        this.addSound('public/sounds/hero/gameover.mp3', 'gameover');
+
         this.size = 400;
 
         this.forever(this.control);
         this.animationState = this.forever(this.animation, 200);
         this.animationState.action = 'idle';
+
+        this.pen(this.drawUI);
 
         this.bullet = new BulletSprite(this.stage);
         this.bullet.hidden = true;
@@ -66,6 +78,17 @@ export class HeroSprite extends Sprite {
 
         } else if (this.animationState.action !== 'idle') {
             this.stopTimer = 0;
+        }
+
+        if (this.animationState.action === 'die') {
+            this.dieTimer++;
+
+            if (this.dieTimer > 150) {
+                this.animationState.action === 'dead';
+                this.delete();
+            }
+
+            return;
         }
 
         if (this.animationState.action === 'attack') {
@@ -91,7 +114,7 @@ export class HeroSprite extends Sprite {
                 this.switchCostume(8);
             }
 
-        } else if (this.stopTimer > 70) {
+        } else if (this.stopTimer > 50) {
             this.animationState.interval = 1;
             this.animationState.action = 'idle';
 
@@ -100,15 +123,32 @@ export class HeroSprite extends Sprite {
             this.animationState.action = 'stop';
         }
 
-        if (this.game.mouseDownOnce()) {
-            this.animationState.interval = 1;
-            this.animationState.action = 'attack';
+        if (this.game.keyPressed('r') && this.ammo < 100) {
+            this.playSound('reload');
+            this.ammo = 100;
+            return;
+        }
 
-            if (this.costumeIndex < 9) {
-                this.switchCostume(9);
+        /**
+         * Shot
+         */
+        if (this.game.mouseDownOnce()) {
+            if (this.ammo > 0) {
+                this.animationState.interval = 1;
+                this.animationState.action = 'attack';
+
+                if (this.costumeIndex < 9) {
+                    this.switchCostume(9);
+                }
+
+            } else {
+                this.startSound('not_ammo');
             }
         }
 
+        /**
+         * Moving
+         */
         this.touchingWall = false
         if (this.game.keyPressed('w')) {
             this.y -= this.moveSpeed;
@@ -146,35 +186,24 @@ export class HeroSprite extends Sprite {
             }
         }
 
+        if (this.game.keyPressed('f')) {
+            this.playSound('gameover');
+            this.animationState.action = 'die';
+        }
+
+        if (this.game.keyPressed(['w', 's', 'a', 'd']) && !this.touchingWall) {
+            this.playSound('move', {
+                'volume': 0.1
+            });
+        }
+
         if (this.touchingWall) {
             this.animationState.interval = 1;
             this.animationState.action = 'stop';
         }
 
         if (this.stage instanceof Dangeon) {
-            if (this.y < 0) {
-                this.y_on_map -= 1;
-                this.y = this.stage.height;
-                this.stage.renderRoom(this.stage.map, this.x_on_map, this.y_on_map);
-            }
-
-            if (this.y > this.stage.height) {
-                this.y_on_map += 1;
-                this.y = 0;
-                this.stage.renderRoom(this.stage.map, this.x_on_map, this.y_on_map);
-            }
-
-            if (this.x < 0) {
-                this.x_on_map -= 1;
-                this.x = this.stage.width;
-                this.stage.renderRoom(this.stage.map, this.x_on_map, this.y_on_map);
-            }
-
-            if (this.x > this.stage.width) {
-                this.x_on_map += 1;
-                this.x = 0;
-                this.stage.renderRoom(this.stage.map, this.x_on_map, this.y_on_map);
-            }
+            this.checkNextLevel();
         }
     }
 
@@ -208,16 +237,26 @@ export class HeroSprite extends Sprite {
                 state.interval = 120;
                 this.nextCostume(9, 12);
 
+                if (this.costumeIndex === 10) {
+                    this.startSound('shot');
+                }
+
                 if (this.costumeIndex === 12) {
                     state.action = 'idle';
-                    this.attack();
+                    this.shot();
                 }
+
+                break;
+
+            case 'die':
+                state.interval = 150;
+                this.hidden = !this.hidden;
 
                 break;
         }
     }
 
-    attack() {
+    shot() {
         const bullet = this.bullet.createClone();
         bullet.x = this.x;
         bullet.y = this.y;
@@ -226,9 +265,75 @@ export class HeroSprite extends Sprite {
         bullet.hidden = false;
 
         bullet.forever(this.bulletMove);
+
+        this.ammo -= 10;
     }
 
     bulletMove(bullet) {
         bullet.move(10);
+    }
+
+    checkNextLevel() {
+        let nextLevel = false;
+
+        if (this.y < 0) {
+            this.y_on_map -= 1;
+            this.y = this.stage.height;
+
+            nextLevel = true;
+        }
+
+        if (this.y > this.stage.height) {
+            this.y_on_map += 1;
+            this.y = 0;
+
+            nextLevel = true;
+        }
+
+        if (this.x < 0) {
+            this.x_on_map -= 1;
+            this.x = this.stage.width;
+
+            nextLevel = true;
+        }
+
+        if (this.x > this.stage.width) {
+            this.x_on_map += 1;
+            this.x = 0;
+
+            nextLevel = true;
+        }
+
+        if (nextLevel) {
+            this.playSound('next_level');
+            this.stage.renderRoom(this.stage.map, this.x_on_map, this.y_on_map);
+
+        }
+    }
+
+    drawUI(context, hero) {
+        // HP
+        context.font = 'bold 20px Arial';
+        context.fillStyle = 'black';
+        context.fillText('HP:', 40, 28);
+
+        context.fillStyle = '#696969';
+        context.fillRect(80, 10, 150, 20);
+        context.fillStyle = 'green';
+        context.fillRect(80, 10, 150 * hero.hp / 100, 20);
+        context.strokeStyle = 'black';
+        context.strokeRect(80, 10, 150, 20);
+
+        // ammo
+        context.font = 'bold 20px Arial';
+        context.fillStyle = 'black';
+        context.fillText('AMMO:', 495, 28);
+
+        context.fillStyle = '#696969';
+        context.fillRect(570, 10, 150, 20);
+        context.fillStyle = 'green';
+        context.fillRect(570, 10, 150 * hero.ammo / 100, 20);
+        context.strokeStyle = 'black';
+        context.strokeRect(570, 10, 150, 20);
     }
 }
