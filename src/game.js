@@ -1,9 +1,10 @@
 import {Game} from 'jetcode-scrubjs';
 
-import {Dangeon} from "./stages/dangeon.stage";
+import {MenuStage} from './stages/menu.stage.js';
+
 
 export const game = new Game(768, 768);
 
-const dangeon = new Dangeon();
+const menuStage = new MenuStage();
 
-game.run(dangeon);
+game.run(menuStage);
