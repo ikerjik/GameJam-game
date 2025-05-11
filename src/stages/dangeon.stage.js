@@ -7,12 +7,13 @@ export class Dangeon extends Stage {
         this.backgroundColor = 'black';
 
         this.map = this.createDangeon();
+        console.log(this.map);
 
         const hero = new NpcSprite();
         hero.x_on_map = 5;
         hero.y_on_map = 5;
         hero.layer = 2;
-        hero.setRectCollider('main', 38, 38)
+        // hero.setRectCollider('main', 38, 38)
 
         this.tile = new TileSprite();
         this.TILE_WIDTH = 64;
@@ -116,37 +117,37 @@ export class Dangeon extends Stage {
                 if (map[y][x] !== 0) {
                     let doors = map[y][x].split('');
                     let room = [
-                        [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 30],
-                        [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+                        [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                        [40, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 45],
                     ];
 
                     for (const door of doors) {
                         switch (door) {
                             case '1':
-                                room[0][5] = 47;
-                                room[0][6] = 47;
+                                room[0][5] = 23;
+                                room[0][6] = 23;
                                 break;
                             case '2':
-                                room[5][11] = 47;
-                                room[6][11] = 47;
+                                room[5][11] = 23;
+                                room[6][11] = 23;
                                 break;
                             case '3':
-                                room[11][5] = 47;
-                                room[11][6] = 47;
+                                room[11][5] = 23;
+                                room[11][6] = 23;
                                 break;
                             case '4':
-                                room[5][0] = 47;
-                                room[6][0] = 47;
+                                room[5][0] = 23;
+                                room[6][0] = 23;
                                 break;
                         }
                     }
@@ -173,7 +174,7 @@ export class Dangeon extends Stage {
                 clone.y = this.TILE_HEIGHT / 2 + this.TILE_HEIGHT * tileY;
                 clone.switchCostume(tileIndex)
 
-                if (tileIndex == 30) {
+                if ([2, 10, 35, 41].includes(tileIndex)) {
                     clone.setCostumeCollider('main')
                     clone.addTag('wall')
                 }
