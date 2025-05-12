@@ -1,7 +1,7 @@
 import {Sprite} from 'jetcode-scrubjs';
 import {BulletSprite} from "./bullet.sprite";
 
-export class EnemyMoleSprite extends Sprite {
+export class BatEnemySprite extends Sprite {
     directionX = 1;
     shotTimer = 0;
     health = 1;
@@ -9,7 +9,7 @@ export class EnemyMoleSprite extends Sprite {
     init() {
         this.name = 'EnemyBat';
 
-        this.addCostumeGrid('public/images/enemy/mole/mole.png', {
+        this.addCostumeGrid('public/images/enemy/bat.png', {
             cols: 4,
             rows: 1
         });
@@ -17,9 +17,9 @@ export class EnemyMoleSprite extends Sprite {
         this.hidden = true;
         this.addTag('enemy');
 
-        this.rotateStyle = 'leftRight';
-
         this.size = 400;
+        this.rotateStyle = 'leftRight';
+        this.direction = 90;
     }
 
     start() {
@@ -35,6 +35,11 @@ export class EnemyMoleSprite extends Sprite {
 
     moving() {
         this.shotTimer++;
+        this.x += this.directionX * 5;
+
+        if (this.touchTag('wall') || this.touchEdge()) {
+            this.directionX *= -1;
+        }
 
         if (this.stage.hero && this.shotTimer > 100) {
             this.pointForward(this.stage.hero);

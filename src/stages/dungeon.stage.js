@@ -1,14 +1,14 @@
 import {Stage} from 'jetcode-scrubjs';
 import {TileSprite} from '../sprites/tile.sprite.js';
 import {HeroSprite} from "../sprites/hero.sprite";
-import {EnemyBatSprite} from "../sprites/enemy-bat.sprite";
-import {EnemyMoleSprite} from "../sprites/enemy-mole.sprite";
-import {BossSprite} from "../sprites/enemy-boss.sprite";
+import {BatEnemySprite} from "../sprites/bat-enemy.sprite";
+import {MoleEnemySprite} from "../sprites/mole-enemy.sprite";
+import {BossEnemySprite} from "../sprites/boss-enemy.sprite";
+import {BedbugEnemySprite} from "../sprites/bedbug-enemy.sprite";
 
 export class DungeonStage extends Stage {
     init() {
         this.backgroundColor = 'black';
-
 
         this.map = this.createDungeon();
         // console.log(this.map);
@@ -23,15 +23,19 @@ export class DungeonStage extends Stage {
 
         this.enemyTemplates = {};
 
-        this.batEnemyTemplate = new EnemyBatSprite(this);
+        this.batEnemyTemplate = new BatEnemySprite(this);
         this.batEnemyTemplate.layer = 2;
-        this.enemyTemplates['bat'] = this.batEnemyTemplate;
-        this.moleEnemyTemplate = new EnemyMoleSprite(this);
+        this.moleEnemyTemplate = new MoleEnemySprite(this);
         this.moleEnemyTemplate.layer = 2;
+        this.bedbugEnemyTemplate = new BedbugEnemySprite(this);
+        this.bedbugEnemyTemplate.layer = 2;
+        this.bossEnemyTemplate = new BossEnemySprite(this);
+        this.bossEnemyTemplate.layer = 2;
+
+        this.enemyTemplates['bat'] = this.batEnemyTemplate;
         this.enemyTemplates['mole'] = this.moleEnemyTemplate;
-        this.bossTemplate = new BossSprite(this);
-        this.bossTemplate.layer = 2;
-        this.enemyTemplates['boss'] = this.bossTemplate;
+        this.enemyTemplates['bedbug'] = this.bedbugEnemyTemplate;
+        this.enemyTemplates['boss'] = this.bossEnemyTemplate;
 
         this.tile = new TileSprite();
         this.TILE_WIDTH = 64;
@@ -173,10 +177,13 @@ export class DungeonStage extends Stage {
                     }
                     let monsters = [];
                     for (let i = 0; i < 5; i++) {
-                        if (this.game.getRandom(0, 10) <= 5) {
-                            monsters.push('mole')
+                        if (this.game.getRandom(0, 10) <= 3) {
+                            monsters.push('bedbug')
                         }
                         if (this.game.getRandom(0, 10) <= 2) {
+                            monsters.push('mole')
+                        }
+                        if (this.game.getRandom(0, 10) <= 1) {
                             monsters.push('bat')
                         }
                     }
@@ -243,8 +250,9 @@ export class DungeonStage extends Stage {
     doRenderRoom(room) {
         this.tile.deleteClones();
         this.batEnemyTemplate.deleteClones();
-        this.bossTemplate.deleteClones();
         this.moleEnemyTemplate.deleteClones();
+        this.bedbugEnemyTemplate.deleteClones();
+        this.bossEnemyTemplate.deleteClones();
 
         if (!room.completed) {
             const enemies = [];
