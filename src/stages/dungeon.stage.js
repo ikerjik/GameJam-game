@@ -43,8 +43,8 @@ export class DungeonStage extends Stage {
 
         this.onReady(()=>{
             this.renderRoom(hero.x_on_map, hero.y_on_map);
-        })
-        this.forever(this.tryFinishRoom);
+            this.tryFinishRoom();
+        });
     }
 
     createDungeon() {
@@ -275,16 +275,16 @@ export class DungeonStage extends Stage {
                 const clone = this.tile.createClone();
                 clone.x = this.TILE_WIDTH / 2 + this.TILE_WIDTH * tileX;
                 clone.y = this.TILE_HEIGHT / 2 + this.TILE_HEIGHT * tileY;
-                clone.switchCostume(tileIndex)
+                clone.switchCostume(tileIndex);
 
                 if ([2, 10, 35, 41].includes(tileIndex)) {
-                    clone.setCostumeCollider('main')
-                    clone.addTag('wall')
+                    clone.setCostumeCollider('main');
+                    clone.addTag('wall');
                 }
 
                 if (tileIndex === 38) { //exit
                     clone.setCostumeCollider('main');
-                    clone.addTag('exit')
+                    clone.addTag('exit');
                 }
 
                 if ([36, 37, 48, 47, 58, 57].includes(tileIndex)) {
@@ -295,13 +295,14 @@ export class DungeonStage extends Stage {
                     floorClone.y = clone.y;
 
                     clone.layer = 1;
-                    clone.setCostumeCollider('main')
-                    clone.addTag('wall')
+                    clone.setCostumeCollider('main');
+                    clone.addTag('wall');
+
                     clone.forever(()=>{
-                        if (this.map[this.hero.y_on_map][this.hero.x_on_map].completed){
+                        if (!this.hero.deleted && this.map[this.hero.y_on_map][this.hero.x_on_map].completed){
                             clone.delete();
                         }
-                    })
+                    });
                 }
             }
         }
@@ -322,7 +323,7 @@ export class DungeonStage extends Stage {
     }
 
     tryFinishRoom() {
-        if (this.map[this.hero.y_on_map][this.hero.x_on_map].enemies <= 0) {
+        if (!this.hero.deleted && this.map[this.hero.y_on_map][this.hero.x_on_map].enemies <= 0) {
             this.completeRoom(this.hero.x_on_map, this.hero.y_on_map);
         }
     }
