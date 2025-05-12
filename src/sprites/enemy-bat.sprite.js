@@ -13,15 +13,21 @@ export class EnemyBatSprite extends Sprite {
             rows: 1
         });
 
+        this.hidden = true;
         this.addTag('enemy');
-
-        this.bullet = new BulletSprite(this.stage);
-        this.bullet.hidden = true;
-        this.bullet.layer = 2;
 
         this.size = 400;
         this.rotateStyle = 'leftRight';
         this.direction = 90;
+    }
+
+    start() {
+        this.bullet = new BulletSprite(this.stage);
+        this.bullet.hidden = true;
+        this.bullet.layer = 2;
+
+        this.hidden = false;
+
         this.forever(this.moving);
         this.forever(this.animation, 100);
     }
@@ -55,9 +61,11 @@ export class EnemyBatSprite extends Sprite {
         bullet.hidden = false;
 
         bullet.forever(this.bulletMove);
+        bullet.run();
     }
 
     bulletMove(bullet) {
+        console.log('bul move');
         bullet.move(10);
 
         if (bullet.touchEdge()) {

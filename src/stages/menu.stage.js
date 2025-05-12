@@ -2,7 +2,7 @@ import {Stage} from 'jetcode-scrubjs';
 
 import {MenubackgroundSprite} from '../sprites/menubackground.sprite.js';
 import {ButtonSprite} from '../sprites/button.sprite.js';
-import {Dangeon} from "./dangeon.stage";
+import {DungeonStage} from "./dungeon.stage";
 
 export class MenuStage extends Stage {
     init() {
@@ -14,7 +14,7 @@ export class MenuStage extends Stage {
         const startButton = new ButtonSprite();
         startButton.layer = 4;
 
-        const dangeon = new Dangeon();
+        const dungeon = new DungeonStage();
 
         startButton.onReady(()=>{
             const ctx = startButton.getCostume().image.getContext('2d');
@@ -26,7 +26,7 @@ export class MenuStage extends Stage {
 
         startButton.forever(()=>{
             if (startButton.touchMouse() && this.game.mouseDownOnce()) {
-                this.game.run(dangeon);
+                this.game.run(dungeon);
             }
         })
     }

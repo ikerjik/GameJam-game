@@ -1,12 +1,12 @@
 import {ScheduledState, Sprite} from "jetcode-scrubjs";
 import {BulletSprite} from "./bullet.sprite";
-import {Dangeon} from "../stages/dangeon.stage";
+import {DungeonStage} from "../stages/dungeon.stage";
 
 export class HeroSprite extends Sprite {
     static instance;
 
     hp = 100;
-    ammo = 10;
+    ammo = 100;
     moveSpeed = 3;
     stopTimer = 0;
     touchingWall = false;
@@ -189,7 +189,7 @@ export class HeroSprite extends Sprite {
 
         if (this.game.keyPressed(['w', 's', 'a', 'd']) && !this.touchingWall) {
             this.playSound('move', {
-                'volume': 0.1
+                'volume': 0
             });
         }
 
@@ -198,7 +198,11 @@ export class HeroSprite extends Sprite {
             this.animationState.action = 'stop';
         }
 
-        if (this.stage instanceof Dangeon) {
+        if (this.touchTag('exit')) {
+            console.log('exit');
+        }
+
+        if (this.stage instanceof DungeonStage) {
             this.checkNextLevel();
         }
     }
@@ -281,6 +285,10 @@ export class HeroSprite extends Sprite {
     }
 
     checkNextLevel() {
+        const currentLevel = {
+            x: this.x_on_map,
+            y: this.y_on_map,
+        };
         let nextLevel = false;
 
         if (this.y < 0) {
@@ -312,9 +320,14 @@ export class HeroSprite extends Sprite {
         }
 
         if (nextLevel) {
-            this.playSound('next_level');
-            this.stage.renderRoom(this.stage.map, this.x_on_map, this.y_on_map);
+            this.stage.completeRoom(currentLevel.x, currentLevel.y);
 
+            this.playSound('next_level');
+            this.stage.renderRoom(this.x_on_map, this.y_on_map);
+
+        } else if (this.touchTag('exit')) {
+            this.playSound('next_level');
+            this.stage.renderFinalRoom();
         }
     }
 

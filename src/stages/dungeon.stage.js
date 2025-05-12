@@ -3,34 +3,39 @@ import {TileSprite} from '../sprites/tile.sprite.js';
 import {HeroSprite} from "../sprites/hero.sprite";
 import {EnemyBatSprite} from "../sprites/enemy-bat.sprite";
 
-export class Dangeon extends Stage {
+export class DungeonStage extends Stage {
+
     init() {
         this.backgroundColor = 'black';
 
 
-        this.map = this.createDangeon();
-        console.log(this.map);
+        this.map = this.createDungeon();
+        // console.log(this.map);
 
         const hero = HeroSprite.getInstance();
         this.hero = hero;
+        this.hero.y = this.height - 100;
 
         hero.x_on_map = 5;
         hero.y_on_map = 5;
         hero.layer = 2;
 
-        const bat = new EnemyBatSprite(this);
-        bat.layer = 2;
+        this.enemyTemplates = {};
+
+        this.batEnemyTemplate = new EnemyBatSprite(this);
+        this.batEnemyTemplate.layer = 2;
+        this.enemyTemplates['bat'] = this.batEnemyTemplate;
 
         this.tile = new TileSprite();
         this.TILE_WIDTH = 64;
         this.TILE_HEIGHT = 64;
 
         this.onReady(()=>{
-            this.renderRoom(this.map, hero.x_on_map, hero.y_on_map);
+            this.renderRoom(hero.x_on_map, hero.y_on_map);
         })
     }
 
-    createDangeon() {
+    createDungeon() {
         const exitRooms = [];
         const map = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -44,7 +49,7 @@ export class Dangeon extends Stage {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
+        ];
 
         let x = 5;
         let y = 5;
@@ -122,8 +127,8 @@ export class Dangeon extends Stage {
         for (let y = 0; y < map.length; y++) {
             for (let x = 0; x < map[y].length; x++) {
                 if (map[y][x] !== 0) {
-                    let doors = map[y][x].split('');
-                    let room = [
+                    const doors = map[y][x].split('');
+                    const room = [
                         [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5],
                         [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
                         [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
@@ -158,12 +163,14 @@ export class Dangeon extends Stage {
                                 break;
                         }
                     }
+
                     map[y][x] = {
                         completed: false,
                         map: room,
-                        enemies: null,
-                        enemiesCount: null
-                    }
+                        enemyTypes: ['bat'],
+                        enemies: []
+                    };
+
                     if (doors.length == 1) {
                         exitRooms.push({x: x, y: y});
                     }
@@ -173,19 +180,65 @@ export class Dangeon extends Stage {
     }
 
     chooseExit(map, exitRooms) {
-        const randomRoom = exitRooms[Math.floor(Math.random() * exitRooms.length)]
+        // const randomRoom = exitRooms[Math.floor(Math.random() * exitRooms.length)]
+        const randomRoom = {x: 5, y: 5}
 
         map[randomRoom.y][randomRoom.x].map[6][6] = 38;
     }
 
-    renderRoom(map, x, y) {
-        this.tile.deleteClones()
-        let room = this.map[y][x];
+    renderRoom(x, y) {
+        const room = this.map[y][x];
+
+        this.doRenderRoom(room);
+    }
+
+    completeRoom(x, y) {
+        const room = this.map[y][x];
+        room.completed = true;
+    }
+
+    renderFinalRoom() {
+        const room = {
+            map: [
+                [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [10, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 35],
+                [40, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 45],
+            ],
+            completed: false,
+            enemyTypes: ['bat'],
+            enemies: []
+        };
+
+        this.doRenderRoom(room);
+    }
+
+    doRenderRoom(room) {
+        this.tile.deleteClones();
+
+        if (!room.completed) {
+            const enemies = [];
+            for (const enemyType of room.enemyTypes) {
+                const enemy = this.createEnemy(enemyType);
+                enemies.push(enemy);
+            }
+
+            room.enemies = enemies;
+        }
+
         for (let tileY = 0; tileY < room.map.length; tileY++) {
-            for (let tileX = 0; tileX < room.map[y].length; tileX++) {
+            for (let tileX = 0; tileX < room.map[0].length; tileX++) {
                 const tileIndex = room.map[tileY][tileX];
 
-                let clone = this.tile.createClone();
+                const clone = this.tile.createClone();
                 clone.x = this.TILE_WIDTH / 2 + this.TILE_WIDTH * tileX;
                 clone.y = this.TILE_HEIGHT / 2 + this.TILE_HEIGHT * tileY;
                 clone.switchCostume(tileIndex)
@@ -195,11 +248,22 @@ export class Dangeon extends Stage {
                     clone.addTag('wall')
                 }
 
-                if (tileIndex == 38) { //exit
+                if (tileIndex === 38) { //exit
                     clone.setCostumeCollider('main');
                     clone.addTag('exit')
                 }
             }
+        }
+    }
+
+    createEnemy(enemyType) {
+        if (this.enemyTemplates[enemyType]) {
+            const enemyTemplate = this.enemyTemplates[enemyType];
+            const enemy = enemyTemplate.createClone();
+
+            // console.log(enemyTemplate);
+
+            enemy.start();
         }
     }
 }
