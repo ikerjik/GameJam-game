@@ -154,20 +154,20 @@ export class DungeonStage extends Stage {
                     for (const door of doors) {
                         switch (door) {
                             case '1':
-                                room[0][5] = 23;
-                                room[0][6] = 23;
+                                room[0][5] = 36;
+                                room[0][6] = 37;
                                 break;
                             case '2':
-                                room[5][11] = 23;
-                                room[6][11] = 23;
+                                room[5][11] = 47;
+                                room[6][11] = 57;
                                 break;
                             case '3':
-                                room[11][5] = 23;
-                                room[11][6] = 23;
+                                room[11][5] = 36;
+                                room[11][6] = 37;
                                 break;
                             case '4':
-                                room[5][0] = 23;
-                                room[6][0] = 23;
+                                room[5][0] = 48;
+                                room[6][0] = 58;
                                 break;
                         }
                     }
@@ -197,8 +197,8 @@ export class DungeonStage extends Stage {
     }
 
     chooseExit(map, exitRooms) {
-        // const randomRoom = exitRooms[Math.floor(Math.random() * exitRooms.length)]
-        const randomRoom = {x: 5, y: 5}
+        const randomRoom = exitRooms[Math.floor(Math.random() * exitRooms.length)]
+        // const randomRoom = {x: 5, y: 5}
 
         map[randomRoom.y][randomRoom.x].map[6][6] = 38;
     }
@@ -273,6 +273,23 @@ export class DungeonStage extends Stage {
                 if (tileIndex === 38) { //exit
                     clone.setCostumeCollider('main');
                     clone.addTag('exit')
+                }
+
+                if ([36, 37, 48, 47, 58, 57].includes(tileIndex)) {
+                    const floorClone = this.tile.createClone();
+                    floorClone.switchCostume(23);
+                    floorClone.layer = 0;
+                    floorClone.x = clone.x;
+                    floorClone.y = clone.y;
+
+                    clone.layer = 1;
+                    clone.setCostumeCollider('main')
+                    clone.addTag('wall')
+                    clone.forever(()=>{
+                        if (this.map[this.hero.y_on_map][this.hero.x_on_map].completed){
+                            clone.delete();
+                        }
+                    })
                 }
             }
         }

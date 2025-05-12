@@ -298,28 +298,28 @@ export class HeroSprite extends Sprite {
 
                 if (this.y < 0) {
                     this.y_on_map -= 1;
-                    this.y = this.stage.height;
+                    this.y = this.stage.height - 100;
 
                     nextLevel = true;
                 }
 
                 if (this.y > this.stage.height) {
                     this.y_on_map += 1;
-                    this.y = 0;
+                    this.y = 100;
 
                     nextLevel = true;
                 }
 
                 if (this.x < 0) {
                     this.x_on_map -= 1;
-                    this.x = this.stage.width;
+                    this.x = this.stage.width - 100;
 
                     nextLevel = true;
                 }
 
                 if (this.x > this.stage.width) {
                     this.x_on_map += 1;
-                    this.x = 0;
+                    this.x = 100;
 
                     nextLevel = true;
                 }
