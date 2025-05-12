@@ -280,10 +280,12 @@ export class HeroSprite extends Sprite {
 
         } else if (bullet.touchTag('enemy')) {
             this.otherSprite.health -= 1;
+
             if (this.otherSprite.health <= 0){
                 this.stage.killEnemy();
                 this.otherSprite.delete();
             }
+
             bullet.delete();
         }
     }
@@ -291,7 +293,6 @@ export class HeroSprite extends Sprite {
     checkNextLevel() {
         if (this.stage.map){
             const currentLevel = this.stage.map[this.y_on_map][this.x_on_map];
-            console.log(currentLevel.completed)
             if (currentLevel.completed) {
 
                 let nextLevel = false;

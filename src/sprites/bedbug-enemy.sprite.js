@@ -2,7 +2,7 @@ import {Sprite} from 'jetcode-scrubjs';
 import {BulletSprite} from "./bullet.sprite";
 
 export class BedbugEnemySprite extends Sprite {
-    health = 1;
+    health = 2;
     attackTimer = 10;
 
     init() {

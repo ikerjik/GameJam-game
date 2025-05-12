@@ -4,7 +4,8 @@ import {BulletSprite} from "./bullet.sprite";
 export class BatEnemySprite extends Sprite {
     directionX = 1;
     shotTimer = 0;
-    health = 1;
+    attackTimer = 10;
+    health = 3;
 
     init() {
         this.name = 'EnemyBat';
@@ -28,6 +29,7 @@ export class BatEnemySprite extends Sprite {
         this.bullet.layer = 2;
 
         this.hidden = false;
+        this.shotTimer = this.game.getRandom(0, 100);
 
         this.forever(this.moving);
         this.forever(this.animation, 100);
@@ -41,17 +43,21 @@ export class BatEnemySprite extends Sprite {
             this.directionX *= -1;
         }
 
-        if (this.stage.hero && this.shotTimer > 100) {
+        if (this.stage.hero && this.shotTimer >= 100 && this.stage.hero) {
             this.pointForward(this.stage.hero);
             this.shot();
-            this.shotTimer = 0
+            this.shotTimer = this.game.getRandom(0, 15);
+        }
+
+        if (this.attackTimer > 50 && this.stage.hero && this.touchSprite(this.stage.hero)) {
+            this.otherSprite.hit();
+            this.attackTimer = 0;
         }
     }
 
     animation() {
         this.nextCostume();
     }
-
 
     shot() {
         const bullet = this.bullet.createClone();
@@ -66,17 +72,16 @@ export class BatEnemySprite extends Sprite {
     }
 
     bulletMove(bullet) {
-        console.log('bul move');
         bullet.move(10);
 
         if (bullet.touchEdge()) {
             bullet.delete();
 
-        } else if (bullet.touchTag('wall')) {
+        } else if (this.stage.hero && bullet.touchSprite(this.stage.hero)) {
+            this.otherSprite.hit();
             bullet.delete();
 
-        } else if (bullet.touchTag('player')) {
-            this.otherSprite.hit();
+        } else if (bullet.touchTag('wall')) {
             bullet.delete();
         }
     }

@@ -2,8 +2,8 @@ import {Sprite} from 'jetcode-scrubjs';
 import {BulletSprite} from "./bullet.sprite";
 
 export class MoleEnemySprite extends Sprite {
-    directionX = 1;
     shotTimer = 0;
+    attackTimer = 10;
     health = 1;
 
     init() {
@@ -27,6 +27,7 @@ export class MoleEnemySprite extends Sprite {
         this.bullet.hidden = true;
         this.bullet.layer = 2;
 
+        this.shotTimer = this.game.getRandom(0, 100);
         this.hidden = false;
 
         this.forever(this.moving);
@@ -36,10 +37,15 @@ export class MoleEnemySprite extends Sprite {
     moving() {
         this.shotTimer++;
 
-        if (this.stage.hero && this.shotTimer > 100) {
+        if (this.stage.hero && this.shotTimer >= 150 && this.stage.hero) {
             this.pointForward(this.stage.hero);
             this.shot();
-            this.shotTimer = 0
+            this.shotTimer = this.shotTimer = this.game.getRandom(0, 5);
+        }
+
+        if (this.attackTimer > 50 && this.stage.hero && this.touchSprite(this.stage.hero)) {
+            this.otherSprite.hit();
+            this.attackTimer = 0;
         }
     }
 
@@ -61,17 +67,16 @@ export class MoleEnemySprite extends Sprite {
     }
 
     bulletMove(bullet) {
-        console.log('bul move');
         bullet.move(10);
 
         if (bullet.touchEdge()) {
             bullet.delete();
 
-        } else if (bullet.touchTag('wall')) {
+        } else if (this.stage.hero && bullet.touchSprite(this.stage.hero)) {
+            this.otherSprite.hit();
             bullet.delete();
 
-        } else if (bullet.touchTag('player')) {
-            this.otherSprite.hit();
+        } else if (bullet.touchTag('wall')) {
             bullet.delete();
         }
     }

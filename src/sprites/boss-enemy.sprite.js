@@ -74,7 +74,6 @@ export class BossEnemySprite extends Sprite {
     }
 
     bulletMove(bullet) {
-        console.log('bul move');
         bullet.move(10);
 
         if (bullet.touchEdge()) {
