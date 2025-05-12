@@ -2,7 +2,7 @@ import {Sprite} from "jetcode-scrubjs";
 
 export class ButtonSprite extends Sprite {
     init(){
-        this.addCostume('../../public/images/button.png');
+        this.addCostume('public/images/button.png');
 
         this.forever(this.logic)
     }

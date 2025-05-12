@@ -16,7 +16,7 @@ export class MenubackgroundSprite extends Sprite {
     static getInstance(layer, image) {
         MenubackgroundSprite.instance = new MenubackgroundSprite();
 
-        MenubackgroundSprite.instance.addCostume("../../public/images/BackgroundMenu/" + image + ".png");
+        MenubackgroundSprite.instance.addCostume("public/images/BackgroundMenu/" + image + ".png");
         MenubackgroundSprite.instance.layer = layer;
         MenubackgroundSprite.instance.bg = 10 - layer * 2;
 
