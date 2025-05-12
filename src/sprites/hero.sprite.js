@@ -279,55 +279,60 @@ export class HeroSprite extends Sprite {
             bullet.delete();
 
         } else if (bullet.touchTag('enemy')) {
-            this.otherSprite.delete();
+            this.otherSprite.health -= 1;
+            if (this.otherSprite.health <= 0){
+                this.stage.killEnemy();
+                this.otherSprite.delete();
+            }
             bullet.delete();
         }
     }
 
     checkNextLevel() {
-        const currentLevel = {
-            x: this.x_on_map,
-            y: this.y_on_map,
-        };
-        let nextLevel = false;
+        if (this.stage.map){
+            const currentLevel = this.stage.map[this.y_on_map][this.x_on_map];
+            console.log(currentLevel.completed)
+            if (currentLevel.completed) {
 
-        if (this.y < 0) {
-            this.y_on_map -= 1;
-            this.y = this.stage.height;
+                let nextLevel = false;
 
-            nextLevel = true;
-        }
+                if (this.y < 0) {
+                    this.y_on_map -= 1;
+                    this.y = this.stage.height;
 
-        if (this.y > this.stage.height) {
-            this.y_on_map += 1;
-            this.y = 0;
+                    nextLevel = true;
+                }
 
-            nextLevel = true;
-        }
+                if (this.y > this.stage.height) {
+                    this.y_on_map += 1;
+                    this.y = 0;
 
-        if (this.x < 0) {
-            this.x_on_map -= 1;
-            this.x = this.stage.width;
+                    nextLevel = true;
+                }
 
-            nextLevel = true;
-        }
+                if (this.x < 0) {
+                    this.x_on_map -= 1;
+                    this.x = this.stage.width;
 
-        if (this.x > this.stage.width) {
-            this.x_on_map += 1;
-            this.x = 0;
+                    nextLevel = true;
+                }
 
-            nextLevel = true;
-        }
+                if (this.x > this.stage.width) {
+                    this.x_on_map += 1;
+                    this.x = 0;
 
-        if (nextLevel) {
-            this.stage.completeRoom(currentLevel.x, currentLevel.y);
+                    nextLevel = true;
+                }
 
-            this.playSound('next_level');
-            this.stage.renderRoom(this.x_on_map, this.y_on_map);
+                if (nextLevel) {
+                    this.playSound('next_level');
+                    this.stage.renderRoom(this.x_on_map, this.y_on_map);
 
-        } else if (this.touchTag('exit')) {
-            this.playSound('next_level');
-            this.stage.renderFinalRoom();
+                } else if (this.touchTag('exit')) {
+                    this.playSound('next_level');
+                    this.stage.renderFinalRoom();
+                }
+            }
         }
     }
 

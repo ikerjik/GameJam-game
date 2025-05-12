@@ -2,9 +2,10 @@ import {Stage} from 'jetcode-scrubjs';
 import {TileSprite} from '../sprites/tile.sprite.js';
 import {HeroSprite} from "../sprites/hero.sprite";
 import {EnemyBatSprite} from "../sprites/enemy-bat.sprite";
+import {EnemyMoleSprite} from "../sprites/enemy-mole.sprite";
+import {BossSprite} from "../sprites/enemy-boss.sprite";
 
 export class DungeonStage extends Stage {
-
     init() {
         this.backgroundColor = 'black';
 
@@ -25,6 +26,12 @@ export class DungeonStage extends Stage {
         this.batEnemyTemplate = new EnemyBatSprite(this);
         this.batEnemyTemplate.layer = 2;
         this.enemyTemplates['bat'] = this.batEnemyTemplate;
+        this.moleEnemyTemplate = new EnemyMoleSprite(this);
+        this.moleEnemyTemplate.layer = 2;
+        this.enemyTemplates['mole'] = this.moleEnemyTemplate;
+        this.bossTemplate = new BossSprite(this);
+        this.bossTemplate.layer = 2;
+        this.enemyTemplates['boss'] = this.bossTemplate;
 
         this.tile = new TileSprite();
         this.TILE_WIDTH = 64;
@@ -33,6 +40,7 @@ export class DungeonStage extends Stage {
         this.onReady(()=>{
             this.renderRoom(hero.x_on_map, hero.y_on_map);
         })
+        this.forever(this.tryFinishRoom);
     }
 
     createDungeon() {
@@ -163,12 +171,21 @@ export class DungeonStage extends Stage {
                                 break;
                         }
                     }
+                    let monsters = [];
+                    for (let i = 0; i < 5; i++) {
+                        if (this.game.getRandom(0, 10) <= 5) {
+                            monsters.push('mole')
+                        }
+                        if (this.game.getRandom(0, 10) <= 2) {
+                            monsters.push('bat')
+                        }
+                    }
 
                     map[y][x] = {
                         completed: false,
                         map: room,
-                        enemyTypes: ['bat'],
-                        enemies: []
+                        enemyTypes: monsters,
+                        enemies: monsters.length
                     };
 
                     if (doors.length == 1) {
@@ -194,7 +211,9 @@ export class DungeonStage extends Stage {
 
     completeRoom(x, y) {
         const room = this.map[y][x];
-        room.completed = true;
+        if (!room.completed) {
+            room.completed = true;
+        }
     }
 
     renderFinalRoom() {
@@ -214,8 +233,8 @@ export class DungeonStage extends Stage {
                 [40, 41, 41, 41, 41, 41, 41, 41, 41, 41, 41, 45],
             ],
             completed: false,
-            enemyTypes: ['bat'],
-            enemies: []
+            enemyTypes: ['boss'],
+            enemies: 1
         };
 
         this.doRenderRoom(room);
@@ -223,6 +242,9 @@ export class DungeonStage extends Stage {
 
     doRenderRoom(room) {
         this.tile.deleteClones();
+        this.batEnemyTemplate.deleteClones();
+        this.bossTemplate.deleteClones();
+        this.moleEnemyTemplate.deleteClones();
 
         if (!room.completed) {
             const enemies = [];
@@ -231,7 +253,7 @@ export class DungeonStage extends Stage {
                 enemies.push(enemy);
             }
 
-            room.enemies = enemies;
+            room.enemies = enemies.length;
         }
 
         for (let tileY = 0; tileY < room.map.length; tileY++) {
@@ -261,9 +283,23 @@ export class DungeonStage extends Stage {
             const enemyTemplate = this.enemyTemplates[enemyType];
             const enemy = enemyTemplate.createClone();
 
+            enemy.x = this.game.getRandom(96, this.width - 96);
+            enemy.y = this.game.getRandom(96, this.height - 96);
+
             // console.log(enemyTemplate);
 
             enemy.start();
         }
+    }
+
+    tryFinishRoom() {
+        if (this.map[this.hero.y_on_map][this.hero.x_on_map].enemies <= 0) {
+            this.completeRoom(this.hero.x_on_map, this.hero.y_on_map);
+        }
+    }
+
+    killEnemy(){
+        this.map[this.hero.y_on_map][this.hero.x_on_map].enemies -= 1;
+        this.tryFinishRoom();
     }
 }
