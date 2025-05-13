@@ -43,7 +43,6 @@ export class DungeonStage extends Stage {
 
         this.onReady(()=>{
             this.renderRoom(hero.x_on_map, hero.y_on_map);
-            this.tryFinishRoom();
         });
     }
 
@@ -217,6 +216,7 @@ export class DungeonStage extends Stage {
     renderRoom(x, y) {
         const room = this.map[y][x];
 
+        this.tryFinishRoom();
         this.doRenderRoom(room);
     }
 
@@ -272,6 +272,18 @@ export class DungeonStage extends Stage {
             for (let tileX = 0; tileX < room.map[0].length; tileX++) {
                 const tileIndex = room.map[tileY][tileX];
 
+                if ([36, 37, 48, 47, 58, 57].includes(tileIndex)) {
+                    const floorClone = this.tile.createClone();
+                    floorClone.switchCostume(23);
+                    floorClone.layer = 0;
+                    floorClone.x = this.TILE_WIDTH / 2 + this.TILE_WIDTH * tileX;
+                    floorClone.y = this.TILE_HEIGHT / 2 + this.TILE_HEIGHT * tileY;
+
+                    if (this.map[this.hero.y_on_map][this.hero.x_on_map].completed) {
+                        continue;
+                    }
+                }
+
                 const clone = this.tile.createClone();
                 clone.x = this.TILE_WIDTH / 2 + this.TILE_WIDTH * tileX;
                 clone.y = this.TILE_HEIGHT / 2 + this.TILE_HEIGHT * tileY;
@@ -288,12 +300,6 @@ export class DungeonStage extends Stage {
                 }
 
                 if ([36, 37, 48, 47, 58, 57].includes(tileIndex)) {
-                    const floorClone = this.tile.createClone();
-                    floorClone.switchCostume(23);
-                    floorClone.layer = 0;
-                    floorClone.x = clone.x;
-                    floorClone.y = clone.y;
-
                     clone.layer = 1;
                     clone.setCostumeCollider('main');
                     clone.addTag('wall');

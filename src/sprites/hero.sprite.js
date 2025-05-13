@@ -327,10 +327,12 @@ export class HeroSprite extends Sprite {
 
                 if (nextLevel) {
                     this.playSound('next_level');
+                    this.bullet.deleteClones();
                     this.stage.renderRoom(this.x_on_map, this.y_on_map);
 
                 } else if (this.touchTag('exit')) {
                     this.playSound('next_level');
+                    this.bullet.deleteClones();
                     this.stage.renderFinalRoom();
                 }
             }
