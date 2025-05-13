@@ -195,15 +195,18 @@ export class DungeonStage extends Stage {
                     const maxEnemies = 2 + distance;
 
                     const monsters = [];
-                    for (let i = 0; i < maxEnemies; i++) {
-                        if (this.game.getRandom(0, 10) <= 3) {
-                            monsters.push('bedbug');
 
-                        } else if (this.game.getRandom(0, 10) <= 2) {
-                            monsters.push('mole');
+                    if (distance > 0) {
+                        for (let i = 0; i < maxEnemies; i++) {
+                            if (this.game.getRandom(0, 10) <= 3) {
+                                monsters.push('bedbug');
 
-                        } else if (distance >= 2 && this.game.getRandom(0, 10) <= 1) {
-                            monsters.push('bat');
+                            } else if (this.game.getRandom(0, 10) <= 2) {
+                                monsters.push('mole');
+
+                            } else if (distance >= 2 && this.game.getRandom(0, 10) <= 1) {
+                                monsters.push('bat');
+                            }
                         }
                     }
 
