@@ -37,7 +37,7 @@ export class BatEnemySprite extends Sprite {
 
     moving() {
         this.shotTimer++;
-        this.x += this.directionX * 5;
+        this.x += this.directionX * 2;
 
         if (this.touchTag('wall') || this.touchEdge()) {
             this.directionX *= -1;
@@ -72,7 +72,7 @@ export class BatEnemySprite extends Sprite {
     }
 
     bulletMove(bullet) {
-        bullet.move(10);
+        bullet.move(7);
 
         if (bullet.touchEdge()) {
             bullet.delete();

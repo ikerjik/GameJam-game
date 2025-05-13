@@ -20,12 +20,9 @@ export class HeroSprite extends Sprite {
         }
     }
 
-    static getInstance(gameStage) {
+    static getInstance() {
         if (!HeroSprite.instance) {
-            HeroSprite.instance = new HeroSprite(gameStage);
-
-        } else {
-            HeroSprite.instance.setStage(gameStage);
+            HeroSprite.instance = new HeroSprite();
         }
 
         return HeroSprite.instance;

@@ -67,7 +67,7 @@ export class MoleEnemySprite extends Sprite {
     }
 
     bulletMove(bullet) {
-        bullet.move(10);
+        bullet.move(7);
 
         if (bullet.touchEdge()) {
             bullet.delete();

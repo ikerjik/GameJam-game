@@ -7,6 +7,16 @@ import {BossEnemySprite} from "../sprites/boss-enemy.sprite";
 import {BedbugEnemySprite} from "../sprites/bedbug-enemy.sprite";
 
 export class DungeonStage extends Stage {
+    static instance;
+
+    static getInstance() {
+        if (!DungeonStage.instance) {
+            DungeonStage.instance = new DungeonStage();
+        }
+
+        return DungeonStage.instance;
+    }
+
     init() {
         this.backgroundColor = 'black';
 

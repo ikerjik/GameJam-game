@@ -3,32 +3,35 @@ import {Stage} from 'jetcode-scrubjs';
 import {MenubackgroundSprite} from '../sprites/menubackground.sprite.js';
 import {ButtonSprite} from '../sprites/button.sprite.js';
 import {DungeonStage} from "./dungeon.stage";
+import {IntroStage} from "./intro.stage";
 
 export class MenuStage extends Stage {
+    static instance;
+
+    static getInstance() {
+        if (!MenuStage.instance) {
+            MenuStage.instance = new MenuStage();
+        }
+
+        return MenuStage.instance;
+    }
+
     init() {
-        this.layer1 = MenubackgroundSprite.getInstance(0, 1);
-        this.layer2 = MenubackgroundSprite.getInstance(1, 2);
-        this.layer3 = MenubackgroundSprite.getInstance(2, 3);
-        this.layer4 = MenubackgroundSprite.getInstance(3, 4);
+        MenubackgroundSprite.getInstance(0, 1);
+        MenubackgroundSprite.getInstance(1, 2);
+        MenubackgroundSprite.getInstance(2, 3);
+        MenubackgroundSprite.getInstance(3, 4);
 
         const startButton = new ButtonSprite();
         startButton.layer = 4;
 
-        const dungeon = new DungeonStage();
-
         startButton.onReady(()=>{
-            const ctx = startButton.getCostume().image.getContext('2d');
-            ctx.font = '14px Arial';
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.fillText('start', 0, 4);
-        })
+            startButton.setLabel('start');
+        });
 
-        startButton.forever(()=>{
-            if (startButton.touchMouse() && this.game.mouseDownOnce()) {
-                this.game.run(dungeon);
-            }
-        })
+        startButton.onClick(() => {
+            this.game.run(IntroStage.getInstance());
+        });
     }
 
 }
