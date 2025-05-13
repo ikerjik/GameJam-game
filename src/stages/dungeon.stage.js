@@ -43,6 +43,7 @@ export class DungeonStage extends Stage {
 
         this.onReady(()=>{
             this.renderRoom(hero.x_on_map, hero.y_on_map);
+            this.pen(this.miniMap, 10);
         });
     }
 
@@ -337,5 +338,29 @@ export class DungeonStage extends Stage {
     killEnemy(){
         this.map[this.hero.y_on_map][this.hero.x_on_map].enemies -= 1;
         this.tryFinishRoom();
+    }
+
+    miniMap(ctx, stage) {
+        if (!stage.hero.deleted) {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+            ctx.fillRect(stage.width - 229, 64, 165, 165);
+
+            const map = stage.map;
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[y].length; x++) {
+                    const room = map[y][x];
+                    if (room !== 0) {
+                        if (room.completed) {
+                            ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
+                            ctx.fillRect(stage.width - 222 + x * 15, 64 + y * 15, 15, 15);
+                        }
+                        if (stage.hero.x_on_map === x && stage.hero.y_on_map === y) {
+                            ctx.fillStyle = "rgba(0, 255, 0, 0.5)"
+                            ctx.fillRect(stage.width - 222 + x * 15, 64 + y * 15, 15, 15);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
