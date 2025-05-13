@@ -27,7 +27,7 @@ export class ButtonSprite extends Sprite {
         this.ononClickCallback = callback.bind(callback.context);
     }
 
-    setLabel(text, color = 'white', fontSize = '10') {
+    setLabel(text, color = 'white', fontSize = 10) {
         const context = this.getCostume().image.getContext('2d');
 
         context.font = fontSize + 'px Arial';
