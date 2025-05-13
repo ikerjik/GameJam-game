@@ -1,13 +1,15 @@
 import {Sprite} from 'jetcode-scrubjs';
 import {BulletSprite} from "./bullet.sprite";
+import {AbstractEnemySprite} from "./abstract-enemy.sprite";
 
-export class BatEnemySprite extends Sprite {
+export class BatEnemySprite extends AbstractEnemySprite {
     directionX = 1;
     shotTimer = 0;
     attackTimer = 10;
     health = 3;
 
     init() {
+        super.init();
         this.name = 'EnemyBat';
 
         this.addCostumeGrid('public/images/enemy/bat.png', {
@@ -85,5 +87,4 @@ export class BatEnemySprite extends Sprite {
             bullet.delete();
         }
     }
-
 }

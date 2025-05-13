@@ -1,11 +1,14 @@
 import {Sprite} from 'jetcode-scrubjs';
 import {BulletSprite} from "./bullet.sprite";
+import {OutroStage} from "../stages/outro.stage";
+import {AbstractEnemySprite} from "./abstract-enemy.sprite";
 
-export class BedbugEnemySprite extends Sprite {
+export class BedbugEnemySprite extends AbstractEnemySprite {
     health = 2;
     attackTimer = 10;
 
     init() {
+        super.init();
         this.name = 'EnemyBat';
 
         this.addCostumeGrid('public/images/enemy/bedbug.png', {
@@ -42,5 +45,14 @@ export class BedbugEnemySprite extends Sprite {
 
     animation() {
         this.nextCostume();
+    }
+
+    hit() {
+        this.health -= 1;
+
+        if (this.health <= 0){
+            this.stage.killEnemy();
+            this.delete();
+        }
     }
 }

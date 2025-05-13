@@ -1,6 +1,8 @@
 import {ScheduledState, Sprite} from "jetcode-scrubjs";
 import {BulletSprite} from "./bullet.sprite";
 import {DungeonStage} from "../stages/dungeon.stage";
+import {OutroStage} from "../stages/outro.stage";
+import {BossEnemySprite} from "./boss-enemy.sprite";
 
 export class HeroSprite extends Sprite {
     static instance;
@@ -205,10 +207,6 @@ export class HeroSprite extends Sprite {
             this.state = 'stop';
         }
 
-        if (this.touchTag('exit')) {
-            console.log('exit');
-        }
-
         if (this.stage instanceof DungeonStage) {
             this.checkNextLevel();
         }
@@ -249,7 +247,7 @@ export class HeroSprite extends Sprite {
                 }
 
                 if (this.costumeIndex === 12) {
-                    animationState.action = 'idle';
+                    this.state = 'idle';
                     this.shot();
                 }
 
@@ -286,12 +284,7 @@ export class HeroSprite extends Sprite {
             bullet.delete();
 
         } else if (bullet.touchTag('enemy')) {
-            this.otherSprite.health -= 1;
-
-            if (this.otherSprite.health <= 0){
-                this.stage.killEnemy();
-                this.otherSprite.delete();
-            }
+            this.otherSprite.hit();
 
             bullet.delete();
         }
@@ -373,6 +366,10 @@ export class HeroSprite extends Sprite {
     }
 
     hit() {
+        if (this.state === 'die' || this.state === 'dead') {
+            return;
+        }
+
         this.hp -= 10;
 
         if (this.hp <= 0) {

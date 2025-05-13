@@ -1,12 +1,14 @@
 import {Sprite} from 'jetcode-scrubjs';
 import {BulletSprite} from "./bullet.sprite";
+import {AbstractEnemySprite} from "./abstract-enemy.sprite";
 
-export class MoleEnemySprite extends Sprite {
+export class MoleEnemySprite extends AbstractEnemySprite {
     shotTimer = 0;
     attackTimer = 10;
     health = 1;
 
     init() {
+        super.init();
         this.name = 'EnemyBat';
 
         this.addCostumeGrid('public/images/enemy/mole.png', {
