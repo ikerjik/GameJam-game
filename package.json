@@ -10,6 +10,6 @@
   },
   "devDependencies": {
     "vite": "^5.4.10",
-    "jetcode-scrubjs": "^2.3.2"
+    "jetcode-scrubjs": "^2.3.3"
   }
 }
