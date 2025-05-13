@@ -65,6 +65,9 @@ export class OutroStage extends AbstractSlideStageStage {
     }
 
     runGame() {
-        this.game.run(DungeonStage.getInstance());
+        const dungeonStage = DungeonStage.getInstance();
+        dungeonStage.restartGame();
+
+        this.game.run(dungeonStage);
     }
 }

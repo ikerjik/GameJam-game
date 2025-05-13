@@ -66,7 +66,6 @@ export class IntroStage extends AbstractSlideStageStage {
     }
 
     runGame() {
-        console.log('run!');
         this.game.run(DungeonStage.getInstance());
     }
 }

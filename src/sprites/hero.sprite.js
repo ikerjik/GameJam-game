@@ -5,12 +5,13 @@ import {DungeonStage} from "../stages/dungeon.stage";
 export class HeroSprite extends Sprite {
     static instance;
 
-    hp = 100;
+    hp = 1;
     ammo = 100;
     moveSpeed = 3;
     stopTimer = 0;
     touchingWall = false;
     dieTimer = 0;
+    state = 'idle';
 
     constructor(stage) {
         super(stage);
@@ -61,7 +62,7 @@ export class HeroSprite extends Sprite {
 
         this.forever(this.control);
         this.animationState = this.forever(this.animation, 200);
-        this.animationState.action = 'idle';
+        this.state = 'idle';
 
         this.pen(this.drawUI);
 
@@ -71,25 +72,34 @@ export class HeroSprite extends Sprite {
     }
 
     control() {
-        if (this.animationState.action === 'stop') {
+        if (this.state === 'dead') {
+            return;
+        }
+
+        if (this.state === 'stop') {
             this.stopTimer++;
 
-        } else if (this.animationState.action !== 'idle') {
+        } else if (this.state !== 'idle') {
             this.stopTimer = 0;
         }
 
-        if (this.animationState.action === 'die') {
+        if (this.state === 'die') {
             this.dieTimer++;
 
             if (this.dieTimer > 150) {
-                this.animationState.action === 'dead';
-                this.delete();
+                this.dieTimer = 0;
+                this.state = 'dead';
+                this.hidden = true;
+
+                this.stage.timeout(() => {
+                    this.stage.showRestartButton();
+                }, 2000);
             }
 
             return;
         }
 
-        if (this.animationState.action === 'attack') {
+        if (this.state === 'attack') {
             return
         }
 
@@ -98,7 +108,7 @@ export class HeroSprite extends Sprite {
          */
         if (this.game.keyPressed(['w', 'd', 'a'])) {
             this.animationState.interval = 1;
-            this.animationState.action = 'move_up';
+            this.state = 'move_up';
 
             if (this.costumeIndex < 5) {
                 this.switchCostume(5);
@@ -106,7 +116,7 @@ export class HeroSprite extends Sprite {
 
         } else if (this.game.keyPressed('s')) {
             this.animationState.interval = 1;
-            this.animationState.action = 'move_down';
+            this.state = 'move_down';
 
             if (this.costumeIndex < 5) {
                 this.switchCostume(8);
@@ -114,11 +124,11 @@ export class HeroSprite extends Sprite {
 
         } else if (this.stopTimer > 50) {
             this.animationState.interval = 1;
-            this.animationState.action = 'idle';
+            this.state = 'idle';
 
         } else {
             this.animationState.interval = 1;
-            this.animationState.action = 'stop';
+            this.state = 'stop';
         }
 
         if (this.game.keyPressed('r') && this.ammo < 100) {
@@ -133,7 +143,7 @@ export class HeroSprite extends Sprite {
         if (this.game.mouseDownOnce()) {
             if (this.ammo > 0) {
                 this.animationState.interval = 1;
-                this.animationState.action = 'attack';
+                this.state = 'attack';
 
                 if (this.costumeIndex < 9) {
                     this.switchCostume(9);
@@ -192,7 +202,7 @@ export class HeroSprite extends Sprite {
 
         if (this.touchingWall) {
             this.animationState.interval = 1;
-            this.animationState.action = 'stop';
+            this.state = 'stop';
         }
 
         if (this.touchTag('exit')) {
@@ -204,34 +214,34 @@ export class HeroSprite extends Sprite {
         }
     }
 
-    animation(hero, state) {
-        switch (state.action) {
+    animation(hero, animationState) {
+        switch (this.state) {
             case 'stop':
-                state.interval = 1;
+                animationState.interval = 1;
                 this.switchCostume(0);
 
                 break;
 
             case 'idle':
-                state.interval = 200;
+                animationState.interval = 200;
                 this.nextCostume(0, 4);
 
                 break;
 
             case 'move_up':
-                state.interval = 120;
+                animationState.interval = 120;
                 this.nextCostume(5, 8);
 
                 break;
 
             case 'move_down':
-                state.interval = 120;
+                animationState.interval = 120;
                 this.prevCostume(5, 8);
 
                 break;
 
             case 'attack':
-                state.interval = 120;
+                animationState.interval = 120;
                 this.nextCostume(9, 12);
 
                 if (this.costumeIndex === 10) {
@@ -239,14 +249,14 @@ export class HeroSprite extends Sprite {
                 }
 
                 if (this.costumeIndex === 12) {
-                    state.action = 'idle';
+                    animationState.action = 'idle';
                     this.shot();
                 }
 
                 break;
 
             case 'die':
-                state.interval = 150;
+                animationState.interval = 150;
                 this.hidden = !this.hidden;
 
                 break;
@@ -369,7 +379,7 @@ export class HeroSprite extends Sprite {
             this.hp = 0;
 
             this.playSound('gameover');
-            this.animationState.action = 'die';
+            this.state = 'die';
         }
     }
 }

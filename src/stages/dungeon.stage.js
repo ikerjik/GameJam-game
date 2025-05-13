@@ -5,6 +5,7 @@ import {BatEnemySprite} from "../sprites/bat-enemy.sprite";
 import {MoleEnemySprite} from "../sprites/mole-enemy.sprite";
 import {BossEnemySprite} from "../sprites/boss-enemy.sprite";
 import {BedbugEnemySprite} from "../sprites/bedbug-enemy.sprite";
+import {ButtonSprite} from "../sprites/button.sprite";
 
 export class DungeonStage extends Stage {
     static instance;
@@ -19,17 +20,6 @@ export class DungeonStage extends Stage {
 
     init() {
         this.backgroundColor = 'black';
-
-        this.map = this.createDungeon();
-        // console.log(this.map);
-
-        const hero = HeroSprite.getInstance();
-        this.hero = hero;
-        this.hero.y = this.height - 100;
-
-        hero.x_on_map = 5;
-        hero.y_on_map = 5;
-        hero.layer = 2;
 
         this.enemyTemplates = {};
 
@@ -51,8 +41,23 @@ export class DungeonStage extends Stage {
         this.TILE_WIDTH = 48;
         this.TILE_HEIGHT = 48;
 
+        this.restartButton = new ButtonSprite();
+        this.restartButton.layer = 4;
+        this.restartButton.hidden = true;
+        this.restartButton.onClick(this.restartGame.bind(this));
+
+        this.restartButton.onReady(() => {
+            this.restartButton.setLabel('Restart');
+        });
+
+        this.map = this.createDungeon();
+
+        this.hero = HeroSprite.getInstance();
+        this.hero.layer = 2;
+        this.initHero();
+
         this.onReady(()=>{
-            this.renderRoom(hero.x_on_map, hero.y_on_map);
+            this.renderRoom(this.hero.x_on_map, this.hero.y_on_map);
             this.pen(this.miniMap, 10);
         });
     }
@@ -373,5 +378,37 @@ export class DungeonStage extends Stage {
                 }
             }
         }
+    }
+
+    showRestartButton() {
+        this.restartButton.hidden = false;
+    }
+
+    hideRestartButton() {
+        this.restartButton.hidden = true;
+    }
+
+    restartGame() {
+        this.hideRestartButton();
+
+        this.map = this.createDungeon();
+        this.initHero();
+
+        this.renderRoom(this.hero.x_on_map, this.hero.y_on_map);
+    }
+
+    initHero() {
+        this.hero.hp = 100;
+        this.hero.ammo = 100;
+        this.hero.state = 'idle';
+        this.hero.hidden = false;
+
+        this.hero.onReady(() => {
+            this.hero.y = this.height - 100;
+            this.hero.x = this.width / 2 - this.hero.width / 2;
+        });
+
+        this.hero.x_on_map = 5;
+        this.hero.y_on_map = 5;
     }
 }
