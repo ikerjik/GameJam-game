@@ -6,7 +6,7 @@ export class TileSprite extends Sprite {
             cols: 10,
             rows: 10
         });
-        this.size = 400;
+        this.size = 300;
         this.removeCollider();
     }
 }

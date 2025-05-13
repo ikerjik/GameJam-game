@@ -60,7 +60,7 @@ export class HeroSprite extends Sprite {
         this.addSound('public/sounds/hero/move.wav', 'move');
         this.addSound('public/sounds/hero/gameover.mp3', 'gameover');
 
-        this.size = 400;
+        this.size = 300;
 
         this.forever(this.control);
         this.animationState = this.forever(this.animation, 200);
@@ -341,28 +341,28 @@ export class HeroSprite extends Sprite {
 
     drawUI(context, hero) {
         // HP
-        context.font = 'bold 20px Arial';
+        context.font = 'bold 16px Arial';
         context.fillStyle = 'black';
-        context.fillText('HP:', 40, 28);
+        context.fillText('HP:', 35, 24);
 
         context.fillStyle = '#696969';
-        context.fillRect(80, 10, 150, 20);
+        context.fillRect(70, 10, 120, 16);
         context.fillStyle = 'green';
-        context.fillRect(80, 10, 150 * hero.hp / 100, 20);
+        context.fillRect(70, 10, 120 * hero.hp / 100, 16);
         context.strokeStyle = 'black';
-        context.strokeRect(80, 10, 150, 20);
+        context.strokeRect(70, 10, 120, 16);
 
         // ammo
-        context.font = 'bold 20px Arial';
+        context.font = 'bold 16px Arial';
         context.fillStyle = 'black';
-        context.fillText('AMMO:', 495, 28);
+        context.fillText('AMMO (R):', 350, 24);
 
         context.fillStyle = '#696969';
-        context.fillRect(570, 10, 150, 20);
+        context.fillRect(440, 10, 100, 16);
         context.fillStyle = 'green';
-        context.fillRect(570, 10, 150 * hero.ammo / 100, 20);
+        context.fillRect(440, 10, 100 * hero.ammo / 100, 16);
         context.strokeStyle = 'black';
-        context.strokeRect(570, 10, 150, 20);
+        context.strokeRect(440, 10, 100, 16);
     }
 
     hit() {

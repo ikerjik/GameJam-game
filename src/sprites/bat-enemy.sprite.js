@@ -18,7 +18,7 @@ export class BatEnemySprite extends Sprite {
         this.hidden = true;
         this.addTag('enemy');
 
-        this.size = 400;
+        this.size = 300;
         this.rotateStyle = 'leftRight';
         this.direction = 90;
     }

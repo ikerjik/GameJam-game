@@ -19,7 +19,7 @@ export class MoleEnemySprite extends Sprite {
 
         this.rotateStyle = 'leftRight';
 
-        this.size = 400;
+        this.size = 300;
     }
 
     start() {

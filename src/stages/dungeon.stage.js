@@ -38,8 +38,8 @@ export class DungeonStage extends Stage {
         this.enemyTemplates['boss'] = this.bossEnemyTemplate;
 
         this.tile = new TileSprite();
-        this.TILE_WIDTH = 64;
-        this.TILE_HEIGHT = 64;
+        this.TILE_WIDTH = 48;
+        this.TILE_HEIGHT = 48;
 
         this.onReady(()=>{
             this.renderRoom(hero.x_on_map, hero.y_on_map);
@@ -343,7 +343,7 @@ export class DungeonStage extends Stage {
     miniMap(ctx, stage) {
         if (!stage.hero.deleted) {
             ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-            ctx.fillRect(stage.width - 229, 64, 165, 165);
+            ctx.fillRect(stage.width - 184, 64, 120, 120);
 
             const map = stage.map;
             for (let y = 0; y < map.length; y++) {
@@ -352,11 +352,12 @@ export class DungeonStage extends Stage {
                     if (room !== 0) {
                         if (room.completed) {
                             ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
-                            ctx.fillRect(stage.width - 222 + x * 15, 64 + y * 15, 15, 15);
+                            ctx.fillRect(stage.width - 189 + x * 10, 69 + y * 10, 10, 10);
                         }
+
                         if (stage.hero.x_on_map === x && stage.hero.y_on_map === y) {
                             ctx.fillStyle = "rgba(0, 255, 0, 0.5)"
-                            ctx.fillRect(stage.width - 222 + x * 15, 64 + y * 15, 15, 15);
+                            ctx.fillRect(stage.width - 189 + x * 10, 69 + y * 10, 10, 10);
                         }
                     }
                 }

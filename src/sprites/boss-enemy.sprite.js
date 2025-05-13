@@ -19,7 +19,7 @@ export class BossEnemySprite extends Sprite {
         this.addTag('enemy');
         this.rotateStyle = 'leftRight';
 
-        this.size = 400;
+        this.size = 300;
         this.direction = this.game.getRandom(0, 360);
     }
 
