@@ -6,6 +6,7 @@ import {MoleEnemySprite} from "../sprites/mole-enemy.sprite";
 import {BossEnemySprite} from "../sprites/boss-enemy.sprite";
 import {BedbugEnemySprite} from "../sprites/bedbug-enemy.sprite";
 import {ButtonSprite} from "../sprites/button.sprite";
+import {SmokeSprite} from '../sprites/smoke.sprite';
 
 export class DungeonStage extends Stage {
     static instance;
@@ -51,6 +52,8 @@ export class DungeonStage extends Stage {
         });
 
         this.map = this.createDungeon();
+
+        this.smoke = new SmokeSprite();
 
         this.hero = HeroSprite.getInstance();
         this.hero.layer = 2;
@@ -353,7 +356,11 @@ export class DungeonStage extends Stage {
         }
     }
 
-    killEnemy(){
+    killEnemy(x, y){
+        const clone = this.smoke.createClone(this);
+        clone.x = x;
+        clone.y = y;
+        clone.start();
         this.map[this.hero.y_on_map][this.hero.x_on_map].enemies -= 1;
         this.tryFinishRoom();
     }
@@ -361,7 +368,7 @@ export class DungeonStage extends Stage {
     miniMap(ctx, stage) {
         if (!stage.hero.deleted) {
             ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-            ctx.fillRect(stage.width - 184, 64, 120, 120);
+            ctx.fillRect(stage.width - 168, 48, 120, 120);
 
             const map = stage.map;
             for (let y = 0; y < map.length; y++) {
@@ -370,12 +377,12 @@ export class DungeonStage extends Stage {
                     if (room !== 0) {
                         if (room.completed) {
                             ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
-                            ctx.fillRect(stage.width - 189 + x * 10, 69 + y * 10, 10, 10);
+                            ctx.fillRect(stage.width - 158 + x * 10, 53 + y * 10, 10, 10);
                         }
 
                         if (stage.hero.x_on_map === x && stage.hero.y_on_map === y) {
                             ctx.fillStyle = "rgba(0, 255, 0, 0.5)"
-                            ctx.fillRect(stage.width - 189 + x * 10, 69 + y * 10, 10, 10);
+                            ctx.fillRect(stage.width - 158 + x * 10, 53 + y * 10, 10, 10);
                         }
                     }
                 }

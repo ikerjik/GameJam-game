@@ -12,7 +12,7 @@ export class AbstractEnemySprite extends Sprite {
         this.health -= 1;
 
         if (this.health <= 0){
-            this.stage.killEnemy();
+            this.stage.killEnemy(this.x, this.y);
             this.delete();
         }
     }

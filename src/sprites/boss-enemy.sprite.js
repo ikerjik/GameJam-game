@@ -50,7 +50,7 @@ export class BossEnemySprite extends AbstractEnemySprite {
         this.shotTimer++;
         this.x += this.xSpeed;
         this.y += this.ySpeed;
-        this.direction = Math.hypot(this.xSpeed, this.ySpeed) * 180 / Math.PI;
+        this.direction = Math.atan2(this.ySpeed, this.xSpeed) * 180 / Math.PI;
 
         if (this.touchTag('wall') || this.touchEdge()) {
             this.x -= this.overlapX;

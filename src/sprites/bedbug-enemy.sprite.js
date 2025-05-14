@@ -46,13 +46,4 @@ export class BedbugEnemySprite extends AbstractEnemySprite {
     animation() {
         this.nextCostume();
     }
-
-    hit() {
-        this.health -= 1;
-
-        if (this.health <= 0){
-            this.stage.killEnemy();
-            this.delete();
-        }
-    }
 }
